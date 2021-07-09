@@ -1,0 +1,22 @@
+version: '3.9'
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    ports:
+      - 3080:8080
+    env_file: .env
+    environment:
+      AWS_S3_ENDPOINT: http://s3:9000
+  s3:
+    image: bitnami/minio:2021
+    ports:
+      - '9000:9000'
+    volumes:
+      - "s3-data:/data"
+    environment:
+      MINIO_ACCESS_KEY: ${AWS_ACCESS_KEY_ID}
+      MINIO_SECRET_KEY: ${AWS_SECRET_ACCESS_KEY}
+      MINIO_DEFAULT_BUCKETS: ${S3_BUCKET}:public
+volumes:
+  s3-data:
